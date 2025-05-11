@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 
 class CategoryController extends Controller
@@ -14,7 +15,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return CategoryResource::collection(Category::all());
     }
 
     /**
@@ -22,7 +23,16 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+        try {
+            $category = Category::create([
+                    "name" => $request->name
+                ]);
+
+            return CategoryResource::make($category);
+        } catch (\Exception $e) {
+            return response()->json(null, 500);
+        }
+
     }
 
     /**
@@ -30,7 +40,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        return CategoryResource::make($category);
     }
 
     /**
@@ -38,7 +48,15 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        //
+        try {
+            $category->name = $request->name;   
+    
+            $category->save();
+    
+            return CategoryResource::make($category);
+        } catch (\Exception $e) {
+            return response()->json(null, 500);
+        }
     }
 
     /**
@@ -46,6 +64,12 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        try {
+            $category->delete();
+    
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            return response()->json(null, 500);
+        }
     }
 }
