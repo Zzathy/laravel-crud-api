@@ -17,7 +17,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return ProductResource::collection(Product::all());
+        return ProductResource::collection(Product::with('category')->get());
     }
 
     /**
@@ -53,7 +53,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return ProductResource::make($product);
+        return ProductResource::make($product->load('category'));
     }
 
     /**
